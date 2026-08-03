@@ -1,0 +1,43 @@
+name = "SDSPNN"
+uuid = "d83c7519-f4f5-5f85-9f47-b03e45d6ec5d"
+version = "0.1.0"
+
+[deps]
+# ── Flow integration ────────────────────────────────────────────────────────
+OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
+DiffEqCallbacks = "459566f4-90b8-5000-8ac3-15dfb0a30def"
+
+# ── Experiment database (SQLite backend) ────────────────────────────────────
+SQLite = "0aa819cd-b072-5ff4-a722-6bc24af294d9"
+DBInterface = "a10d1c49-ce27-4219-8d33-6db1a4562965"
+JSON3 = "0f8b85d8-7281-11e9-16c2-39a750bddbf1"
+SHA = "ea8e919c-243c-51af-8825-aaa63cd721ce"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+
+# ── Numerics helpers ───────────────────────────────────────────────────────
+ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
+ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
+
+# ── Standard library ───────────────────────────────────────────────────────
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+# ── Plot scripts only (pNN_*.jl). Never loaded by a compute script. ────────
+# Installed here so `Pkg.instantiate()` covers Mohammed's plot runs. Loading
+# these is what crashes Codex's terminal, not installing them.
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+PGFPlotsX = "8314cec4-20b6-5062-9cdb-752b83310925"
+LaTeXStrings = "b964fa9f-0449-5b57-a5c2-d3ea65f4040f"
+
+# ── Not included, and why ──────────────────────────────────────────────────
+# JuMP/HiGHS: the plan calls for exact projections (2-D weighted active-set,
+# closed-form weighted simplex), so no QP solver is needed. Add only if a
+# spec note asks for a QP cross-check of a projection.
+
+[compat]
+julia = "1.10"

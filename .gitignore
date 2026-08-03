@@ -1,0 +1,96 @@
+# Generated numerical artifacts
+results/*
+!results/.gitkeep
+
+# Databases and SQLite sidecars
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+*.sqlite-journal
+*.sqlite-shm
+*.sqlite-wal
+
+# Internal agent and planning files
+CLAUDE.md
+**/CLAUDE.md
+.claude/
+**/.claude/
+.codex/
+**/.codex/
+.agents/
+**/.agents/
+implementation_plan*.md
+docs/superpowers/
+
+# Julia-generated and machine-local state
+.julia/
+compiled/
+dev/
+deps/deps.jl
+deps/build.log
+LocalPreferences.toml
+JuliaLocalPreferences.toml
+Manifest-v*.toml
+*.jl.cov
+*.jl.*.cov
+*.jl.mem
+*.mem
+coverage/
+lcov.info
+docs/build/
+
+# Generated reports and caches
+.cache/
+.coverage
+coverage.xml
+htmlcov/
+test-results/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Editors and IDEs
+.idea/
+.vscode/
+*.code-workspace
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*.user
+*.userosscache
+
+# Operating-system metadata
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Temporary files and backups
+.tmp/
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej
+*.old
+*~
+.#*
+#*#
+
+# Logs and crash dumps outside results/
+*.log
+core
+core.*
+*.dmp
+hs_err_pid*
