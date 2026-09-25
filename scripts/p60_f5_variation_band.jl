@@ -14,7 +14,7 @@ function main()
 
     tau = [p.tau for p in grid]
     panel_top = plot(tau, [p.cg for p in grid]; color=:blue, linewidth=1.6,
-                     xlabel=L"\tau", ylabel=L"c_g(\tau)", label=L"c_g",
+                     xlabel=L"\tau", ylabel=L"c_g^{\mathrm{lb}}(\tau)", label=L"c_g^{\mathrm{lb}}",
                      title="Certified variation band")
     hline!(panel_top, [0.0]; color=:black, linestyle=:dash, label="zero")
     vline!(panel_top, [summary.tau]; color=:red, linestyle=:dot,
@@ -27,7 +27,7 @@ function main()
     right_axis = twinx(panel_bottom)
     plot!(right_axis, tau, [p.residual_norm_r_0p95 for p in grid];
           color=:purple, linestyle=:dash, linewidth=1.4,
-          ylabel=L"\|\mathcal{R}_\tau\|\ (r=0.95)", label="residual norm")
+          ylabel=L"\|\mathcal{R}_\tau\|\ (s=0.95)", label="residual norm")
 
     figure = plot(panel_top, panel_bottom; layout=(2, 1), size=(760, 800))
     output = figure_output_path("f5_variation_band_r2.pdf")

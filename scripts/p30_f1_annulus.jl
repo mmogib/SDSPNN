@@ -25,7 +25,7 @@ function main()
         indices = findall(==(run_id), artifact.run_ids)
         payloads = artifact.payloads[indices]
         plot!(plt, [p.x1 for p in payloads], [p.x2 for p in payloads];
-              color=color, linewidth=1.4, label=replace(run_id, "r_" => "r(0)=", "p" => "."))
+              color=color, linewidth=1.4, label=replace(run_id, "r_" => "s(0)=", "p" => "."))
     end
 
     output = figure_output_path("f1_annulus_r2.pdf")

@@ -16,6 +16,24 @@ function json_rows(db, query, params=())
     return [JSON3.read(String(value)) for value in frame.payload_json]
 end
 
+function tau_star_consistency(db; atol=1e-14)
+    t1 = only(json_rows(db, """SELECT payload_json FROM artifact_rows
+        WHERE artifact_id='T1_R2_20260801' AND run_id='B_tau_star'"""))
+    f5 = only(json_rows(db, """SELECT payload_json FROM artifact_rows
+        WHERE artifact_id='F5_R2_20260801' AND run_id='root_summary'"""))
+    t1_tau = Float64(t1.tau)
+    f5_tau = Float64(f5.tau)
+    difference = abs(t1_tau - f5_tau)
+    isapprox(t1_tau, f5_tau; atol=atol, rtol=0.0) ||
+        error("T1/F5 tau-star mismatch: T1=$t1_tau, F5=$f5_tau, atol=$atol")
+    return Dict(
+        "T1_tau_star" => t1_tau,
+        "F5_tau_star" => f5_tau,
+        "absolute_difference" => difference,
+        "tolerance" => atol,
+    )
+end
+
 function main()
     db = open_artifact_db()
     try
@@ -40,6 +58,9 @@ function main()
                 "selection_hashes" => String.(series.selection_query_hash),
             )))
         end
+
+        println("=== CROSS-ARTIFACT CONSISTENCY ===")
+        println(canonical_json(tau_star_consistency(db)))
 
         println("=== GATE EVIDENCE ===")
         gates = DataFrame(DBInterface.execute(db, """SELECT gate_name, check_name,

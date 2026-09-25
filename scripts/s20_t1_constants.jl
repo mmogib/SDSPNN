@@ -56,10 +56,11 @@ function main()
     logpath, tee = setup_logging("s20_t1_constants")
     db = open_artifact_db()
     try
+        tau_star = cg_root(0.139, 0.140; tol=1e-14)
         rows = [
             tau_row("A_counterexample", 1.0; provenance_label="manuscript"),
             tau_row("B_tau_0.1", 0.1),
-            tau_row("B_tau_0.1394", 0.1394),
+            tau_row("B_tau_star", tau_star),
             tau_row("B_tau_1", 1.0),
             control_row("C_bounded_hessian", control_constants(:C).L, control_constants(:C).KM_bound,
                         [control_constants(:C).spectral_lower, control_constants(:C).spectral_upper],
@@ -74,9 +75,18 @@ function main()
                         control_constants(:E).integrability,
                         Dict("metric" => "revision 2", "L" => "analytic/exact", "KM" => "analytic/exact_on_domain")),
         ]
-        config = Dict("instances" => [row["instance"] for row in rows], "revision" => 2)
-        protocol = Dict("kind" => "analytic constants", "RNG" => "none",
-                        "flow_fields_for_controls" => "not_applicable")
+        config = Dict(
+            "instances" => [row["instance"] for row in rows],
+            "revision" => 2,
+            "tau_star_bracket" => [0.139, 0.140],
+            "tau_star_tolerance" => 1e-14,
+        )
+        protocol = Dict(
+            "kind" => "analytic constants",
+            "RNG" => "none",
+            "flow_fields_for_controls" => "not_applicable",
+            "tau_star_method" => "analytic sign bracket followed by bisection",
+        )
         created = begin_artifact!(db, ARTIFACT_ID, "T1", "scripts/s20_t1_constants.jl",
                                   config; expected_runs=length(rows), expected_rows=length(rows),
                                   protocol=protocol, force=force)

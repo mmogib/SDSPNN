@@ -54,6 +54,24 @@ const PRODUCTION_JULIA_FILES = vcat(
     @test !occursin("\"C3:", f4_source)
     @test !occursin("\"T:", f4_source)
 
+    t1_source = read(joinpath(TEST_JCODE_ROOT, "scripts", "s20_t1_constants.jl"), String)
+    @test occursin("tau_star = cg_root(0.139, 0.140; tol=1e-14)", t1_source)
+    @test occursin("tau_row(\"B_tau_star\", tau_star)", t1_source)
+    @test !occursin("B_tau_0.1394", t1_source)
+
+    audit_source = read(joinpath(TEST_JCODE_ROOT, "scripts", "s95_final_audit.jl"), String)
+    @test occursin("B_tau_star", audit_source)
+    @test occursin("T1/F5 tau-star mismatch", audit_source)
+
+    f1_source = read(joinpath(TEST_JCODE_ROOT, "scripts", "p30_f1_annulus.jl"), String)
+    @test occursin("\"s(0)=\"", f1_source)
+    @test !occursin("\"r(0)=\"", f1_source)
+
+    f5_source = read(joinpath(TEST_JCODE_ROOT, "scripts", "p60_f5_variation_band.jl"), String)
+    @test occursin("c_g^{\\mathrm{lb}}", f5_source)
+    @test occursin("(s=0.95)", f5_source)
+    @test !occursin("(r=0.95)", f5_source)
+
     for source_path in PRODUCTION_JULIA_FILES
         source = read(source_path, String)
         @test !occursin(r"paper[\\/]", source)
