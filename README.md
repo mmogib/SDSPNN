@@ -73,7 +73,7 @@ julia --project=. scripts/s90_g6_accounting.jl
 julia --project=. scripts/s95_final_audit.jl
 ```
 
-`s90_g6_accounting.jl` checks run accounting and row counts before it atomically promotes every artifact from `pending` to `final`. Only then does it write the CSV rows and JSON manifests below `results/exports/`. `s95_final_audit.jl` is read-only. It revalidates the final manifests, selection hashes, gates, and the values used in the numerical discussion.
+`s90_g6_accounting.jl` checks run accounting and row counts for all six artifacts before finalizing them and writing CSV rows and JSON manifests below `results/exports/`. `s95_final_audit.jl` checks final status, accounting, stored selection hashes, and agreement between the table and figure values of the certificate threshold. It prints the recorded gates and numerical evidence without changing the artifacts.
 
 ### 4. Generate the figures
 
@@ -88,20 +88,22 @@ julia --project=. scripts/p60_f5_variation_band.jl
 
 Each plot script reads a final database artifact and writes one PDF plus a provenance sidecar under `results/figures/`. Plot scripts do not solve an ODE, project a point, differentiate a residual, or write to the artifact database.
 
-## Output map
+## Paper-to-script output map
 
 Artifact identifiers are internal provenance keys. They do not need to match the final numbering in the manuscript.
 
-| Numerical output | Compute script | Artifact ID | Plot consumer | Generated output |
+| Paper output (§7) | Compute script | Artifact ID | Plot consumer | Generated output |
 |---|---|---|---|---|
-| Hypothesis and constants table | `scripts/s20_t1_constants.jl` | `T1_R2_20260801` | — | `results/exports/t1_r2_20260801_*` |
-| Annulus trajectories and phase portrait | `scripts/s30_f1_annulus.jl` | `F1_R2_20260801` | `scripts/p30_f1_annulus.jl` | `results/figures/f1_annulus_r2.pdf` |
-| Certified radius and theorem envelope | `scripts/s40_f2_certified_radius.jl` | `F2_R2_20260801` | `scripts/p40_f2_certified_radius.jl` | `results/figures/f2_certified_radius_r2.pdf` |
-| Integrability residual and controls | `scripts/s50_f4_integrability.jl` | `F4_R2_20260801` | `scripts/p50_f4_integrability.jl` | `results/figures/f4_integrability_residual_r2.pdf` |
-| Metric-variation certification band | `scripts/s60_f5_variation_band.jl` | `F5_R2_20260801` | `scripts/p60_f5_variation_band.jl` | `results/figures/f5_variation_band_r2.pdf` |
-| Active weighted-projection table | `scripts/s70_active_projection.jl` | `AP1_R2_20260802` | — | `results/exports/ap1_r2_20260802_*` |
+| Table 1 — metric, residual and certificate quantities | `scripts/s20_t1_constants.jl` | `T1_R2_20260801` | — | `results/exports/t1_r2_20260801_rows.csv` |
+| Figure 1 — annulus | `scripts/s30_f1_annulus.jl` | `F1_R2_20260801` | `scripts/p30_f1_annulus.jl` | `results/figures/f1_annulus_r2.pdf` |
+| Figure 2 — integrability residual, four metrics | `scripts/s50_f4_integrability.jl` | `F4_R2_20260801` | `scripts/p50_f4_integrability.jl` | `results/figures/f4_integrability_residual_r2.pdf` |
+| Figure 3 — local certificate at τ = 1 | `scripts/s40_f2_certified_radius.jl` | `F2_R2_20260801` | `scripts/p40_f2_certified_radius.jl` | `results/figures/f2_certified_radius_r2.pdf` |
+| Figure 4 — global certificate across τ | `scripts/s60_f5_variation_band.jl` | `F5_R2_20260801` | `scripts/p60_f5_variation_band.jl` | `results/figures/f5_variation_band_r2.pdf` |
+| Table 2 — projection at an active constraint | `scripts/s70_active_projection.jl` | `AP1_R2_20260802` | — | `results/exports/ap1_r2_20260802_rows.csv` |
 
-Every export prefix expands to a row file ending in `_rows.csv` and a manifest ending in `_manifest.json`. Every figure PDF has a neighboring `_provenance.txt` sidecar that records the artifact manifest hash and selection-query hash.
+Every artifact has a `_rows.csv` export and a `_manifest.json` file with the lowercase artifact ID as prefix. Table 2's CSV contains per-point data; `s70_active_projection.jl` prints its aggregated table to the console and `results/logs/`. Every figure PDF has a neighboring `_provenance.txt` sidecar recording its manifest and selection-query hashes.
+
+For the numbers quoted in §7, run `scripts/s95_final_audit.jl`: it checks the shared certificate threshold and prints the constants, trajectory errors, radius gap, global-certificate ratio, and active-projection evidence. The table and figure computations above supply those values.
 
 ## Generated directory structure
 
@@ -139,7 +141,7 @@ The database is the single source for plots. Plot consumers refuse missing or no
 - Production code resolves all paths from the repository root exported as `JCODE_ROOT`.
 - The compute pipeline is deterministic and uses no random input.
 - Compute and plot stages are deliberately separate. Every plotted number must already exist in a finalized artifact.
-- The exported CSV files and JSON manifest hashes are the preferred comparison targets.
+- Compare exported CSV data and manifest fields other than `created_utc`, `finalized_utc`, and `final_manifest_hash`. Creation time enters the manifest hash, so it changes on a fresh run even when the data agree; use it to trace a figure to its own run. Floating-point results can also vary across platforms.
 - Raw PDF hashes can differ across operating systems because fonts, LaTeX installations, or plotting backends may embed environment-specific metadata.
 
 For a concise machine-readable review of the completed run, use:
